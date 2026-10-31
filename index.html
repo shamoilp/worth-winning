@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WIWI Deal Calculator</title>
+  <meta name="description" content="Is this deal worth winning? Score any deal, bid or project with the WIWI formula before you commit. Free, runs in your browser.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f766e'/%3E%3Cpath d='M14 40h36M22 40V28M32 40V20M42 40V32' stroke='%23c8a24a' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="src/app.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">WIWI score · free deal check</p>
+      <h1>Is this deal worth winning?</h1>
+      <p class="lede">Score a deal, bid, hire or project before you commit. Five numbers, about two minutes. Everything stays in your browser.</p>
+      <p class="formula" aria-label="WIWI equals value times chance, divided by direct cost plus opportunity cost plus ego tax">
+        <span class="formula-name">WIWI</span> =
+        <span class="frac">
+          <span class="num">Value × Chance</span>
+          <span class="den">Direct cost + Opportunity cost + Ego tax</span>
+        </span>
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap layout">
+    <form id="wiwi-form" class="panel" novalidate autocomplete="off">
+      <section aria-labelledby="step-numbers">
+        <h2 id="step-numbers"><span class="step">1</span> The numbers</h2>
+
+        <div class="row two">
+          <label class="field">
+            <span class="label">Deal name <em>(optional)</em></span>
+            <input id="name" name="name" type="text" maxlength="80" placeholder="e.g. Distribution contract bid">
+          </label>
+          <label class="field">
+            <span class="label">Currency</span>
+            <select id="currency" name="currency"></select>
+          </label>
+        </div>
+
+        <div class="field">
+          <label class="label" for="value">What it's really worth <abbr title="Ultimate utility">V<sub>u</sub></abbr></label>
+          <input id="value" name="value" type="text" inputmode="decimal" maxlength="20" placeholder="400,000" aria-describedby="value-hint value-error">
+          <span class="hint" id="value-hint">The payoff once the excitement wears off. Use profit, not revenue.</span>
+          <span class="error" id="value-error" role="alert"></span>
+        </div>
+
+        <div class="field">
+          <label class="label" for="chance">Honest chance of success <abbr title="Probability of success">P<sub>s</sub></abbr></label>
+          <div class="chance-row">
+            <input id="chance-range" type="range" min="0" max="100" step="1" value="50" aria-label="Chance of success, in percent">
+            <span class="suffix-input">
+              <input id="chance" name="chance" type="text" inputmode="decimal" maxlength="6" placeholder="50" aria-describedby="chance-hint chance-error">
+              <span aria-hidden="true">%</span>
+            </span>
+          </div>
+          <span class="hint" id="chance-hint">Your real odds, not the version you'd put in a pitch deck.</span>
+          <span class="error" id="chance-error" role="alert"></span>
+        </div>
+
+        <div class="field">
+          <label class="label" for="directCost">Direct costs <abbr title="Direct costs">C<sub>d</sub></abbr></label>
+          <input id="directCost" name="directCost" type="text" inputmode="decimal" maxlength="20" placeholder="90,000" aria-describedby="directCost-hint directCost-error">
+          <span class="hint" id="directCost-hint">Cash you'll spend, plus your hours × your hourly rate.</span>
+          <span class="error" id="directCost-error" role="alert"></span>
+        </div>
+
+        <div class="field">
+          <label class="label" for="opportunityCost">Opportunity cost <abbr title="Opportunity cost">C<sub>o</sub></abbr></label>
+          <input id="opportunityCost" name="opportunityCost" type="text" inputmode="decimal" maxlength="20" placeholder="30,000" aria-describedby="opportunityCost-hint opportunityCost-error">
+          <span class="hint" id="opportunityCost-hint">What the same money and time would earn on your next-best option.</span>
+          <span class="error" id="opportunityCost-error" role="alert"></span>
+        </div>
+
+        <div class="field">
+          <label class="label" for="egoTax">Ego tax <abbr title="Ego tax">C<sub>e</sub></abbr></label>
+          <input id="egoTax" name="egoTax" type="text" inputmode="decimal" maxlength="20" placeholder="0" aria-describedby="egoTax-hint egoTax-error">
+          <span class="hint" id="egoTax-hint">The extra you'd pay just to avoid backing down. Step 2 suggests a figure.</span>
+          <span class="error" id="egoTax-error" role="alert"></span>
+        </div>
+      </section>
+
+      <section aria-labelledby="step-flags">
+        <h2 id="step-flags"><span class="step">2</span> Red-flag check</h2>
+        <p class="hint block">Tick any that are true. Each one is a sign your ego is pricing the deal.</p>
+        <ul id="flags" class="flags"></ul>
+        <div class="suggest" id="suggest" hidden>
+          <p><span id="suggest-text"></span></p>
+          <button type="button" id="use-suggestion" class="btn small">Use as ego tax</button>
+        </div>
+      </section>
+
+      <section aria-labelledby="step-stop">
+        <h2 id="step-stop"><span class="step">3</span> Your stop rule</h2>
+        <div class="field">
+          <label class="label" for="stopRule">I walk away if…</label>
+          <textarea id="stopRule" name="stopRule" rows="3" maxlength="500" placeholder="costs pass SAR 120,000, or there's no signed contract by 31 December" aria-describedby="stopRule-hint"></textarea>
+          <span class="hint" id="stopRule-hint">Decide this now, while you're still calm. It's what stops a bad deal from growing.</span>
+        </div>
+      </section>
+
+      <div class="form-actions">
+        <button type="button" id="load-example" class="btn ghost">Load an example</button>
+        <button type="reset" id="clear" class="btn ghost">Clear</button>
+      </div>
+    </form>
+
+    <aside class="panel result" aria-labelledby="result-title">
+      <h2 id="result-title" class="sr-only">Your result</h2>
+      <div id="result-empty" class="empty">
+        <p class="big-dash" aria-hidden="true">–</p>
+        <p>Enter what it's worth, your chance of success and at least one cost to see the score.</p>
+      </div>
+
+      <div id="result-body" hidden>
+        <p class="deal-name" id="out-name"></p>
+        <p class="score-label">WIWI score</p>
+        <p class="score" id="out-score" aria-live="polite"></p>
+        <p class="verdict" id="out-verdict"></p>
+
+        <div class="gauge" aria-hidden="true">
+          <div class="gauge-track">
+            <span class="zone regret"></span><span class="zone thin"></span><span class="zone win"></span>
+            <span class="marker" id="out-marker"></span>
+          </div>
+          <div class="gauge-scale"><span>0</span><span class="tick-1">1.0</span><span class="tick-15">1.5</span><span>3+</span></div>
+        </div>
+
+        <p class="advice" id="out-advice"></p>
+
+        <dl class="breakdown">
+          <div><dt>Realistic payoff</dt><dd id="out-expected"></dd></div>
+          <div><dt>Full cost</dt><dd id="out-cost"></dd></div>
+          <div><dt>Net</dt><dd id="out-net"></dd></div>
+        </dl>
+        <p class="breakeven" id="out-breakeven"></p>
+
+        <div class="print-only">
+          <h3>Red flags ticked</h3>
+          <ul id="print-flags"></ul>
+          <h3>Stop rule</h3>
+          <p id="print-stop"></p>
+          <p class="print-date" id="print-date"></p>
+        </div>
+
+        <div class="result-actions">
+          <button type="button" id="copy-link" class="btn">Copy share link</button>
+          <button type="button" id="print" class="btn ghost">Print / save PDF</button>
+        </div>
+        <p class="status" id="status" role="status"></p>
+      </div>
+    </aside>
+  </main>
+
+  <a id="mini-score" class="mini-score" href="#result-title" hidden>
+    <span>WIWI <strong id="mini-value"></strong></span>
+    <span id="mini-verdict"></span>
+    <span aria-hidden="true">See result ↓</span>
+  </a>
+
+  <footer class="wrap footer">
+    <p>Formula from <strong>“ROI of Ego”</strong>, <em>Business Advisor</em> (Shrinikethan, Chennai; ed. <a href="https://www.linkedin.com/in/muralide/" rel="noopener">D. Murali</a>), 25 Oct 2026. The 1.5 band, red-flag check and ego-tax suggestion are this tool's additions.</p>
+    <p>Built by <a href="https://github.com/shamoilp">Shamoil Plumber</a>, accountant and tax advisor in Saudi Arabia · <a href="https://github.com/shamoilp/wiwi-calculator">Source on GitHub</a> · MIT licence. A thinking aid, not financial advice.</p>
+  </footer>
+</body>
+</html>

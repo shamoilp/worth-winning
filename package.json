@@ -1,0 +1,15 @@
+{
+  "name": "wiwi-calculator",
+  "version": "1.0.0",
+  "description": "Is this deal worth winning? Score it with the WIWI formula before you commit.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "coverage": "node --test --experimental-test-coverage \"test/*.test.js\""
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "jsdom": "^25.0.1"
+  }
+}
