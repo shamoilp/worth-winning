@@ -93,6 +93,14 @@ describe('page wiring', () => {
     assert.match($('print-stop').textContent, /^I walk away if costs pass/);
   });
 
+  test('lists the deal inputs in the print report', () => {
+    assert.match($('print-value').textContent, /SAR\s?100,000/);
+    assert.equal($('print-chance').textContent, '35%');
+    assert.match($('print-direct').textContent, /SAR\s?90,000/);
+    assert.match($('print-opportunity').textContent, /SAR\s?30,000/);
+    assert.match($('print-ego').textContent, /SAR\s?18,000/);
+  });
+
   test('treats typed text as text, never as HTML', () => {
     type('name', '<img src=x onerror=alert(1)>');
     assert.equal($('out-name').textContent, '<img src=x onerror=alert(1)>');

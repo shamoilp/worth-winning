@@ -122,6 +122,12 @@ function renderPrintSummary(state) {
     return item;
   }));
   $('print-stop').textContent = isBlank(state.stopRule) ? 'None written.' : `I walk away if ${state.stopRule.trim()}`;
+  const money = (field) => formatMoney(parseAmount(state[field]) ?? 0, state.currency);
+  $('print-value').textContent = money('value');
+  $('print-chance').textContent = `${parseChance(state.chance)}%`;
+  $('print-direct').textContent = money('directCost');
+  $('print-opportunity').textContent = money('opportunityCost');
+  $('print-ego').textContent = money('egoTax');
   const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   $('print-date').textContent = `Scored on ${today}.`;
 }

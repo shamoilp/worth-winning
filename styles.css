@@ -280,7 +280,21 @@ body.unlocked .unlock-note { display: none; }
   }
   .layout { display: block; margin: 0; }
   .panel { box-shadow: none; border: 1px solid #999; }
+  @page { margin: 10mm; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .print-only { display: block; }
-  .print-only h3 { font-size: 15px; margin: 16px 0 6px; }
-  .footer { padding-top: 16px; }
+  .print-only h3 { font-size: 13px; margin: 12px 0 6px; text-transform: uppercase; letter-spacing: .06em; }
+  .hero .lede, .hero .eyebrow, .hero .formula, .footer { display: none; }
+  .hero { padding: 0 0 8px; }
+  .hero h1 { font-size: 22px; }
+  .panel { padding: 14px 18px; }
+  .score { font-size: 44px; }
+  .gauge { margin: 12px 0 4px; }
+  .advice { margin: 10px 0; font-size: 14px; }
+  .breakdown { margin-bottom: 8px; font-size: 13px; }
+  .breakdown div { padding: 5px 12px; }
+  .breakeven, .print-only p, .print-only li { font-size: 13px; margin: 4px 0; }
+  .print-brand { margin-top: 14px; padding-top: 10px; border-top: 2px solid #0f766e; font-size: 12px; color: #333; }
+  .print-brand p { margin: 2px 0; }
+  .print-credit { color: #666; }
 }
