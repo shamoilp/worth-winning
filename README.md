@@ -1,6 +1,6 @@
-# The W-Trilogy deal check: is this deal worth winning?
+# Worth Winning: is this deal worth winning?
 
-A free one-page tool that checks a deal, bid, hire or project at three points, so the decision doesn't rest on excitement or pride:
+A free 3-step deal check, based on D. Murali's W-Trilogy. One page that checks a deal, bid, hire or project at three points, so the decision doesn't rest on excitement or pride:
 
 | Tab | When | What it asks |
 |---|---|---|
@@ -8,9 +8,9 @@ A free one-page tool that checks a deal, bid, hire or project at three points, s
 | **2 · WIDI** (Will It, Do It) | While you're in it | Five warning signs of throwing good money after bad, plus a fresh-eyes re-score that ignores money already spent |
 | **3 · WIWI** (the ROI of Ego) | To score it, or look back | The WIWI score below, and a post-mortem on what the finished deal actually delivered |
 
-**▶ Try it live: https://shamoilp.github.io/wiwi-calculator/**
+**▶ Try it live: https://shamoilp.github.io/worth-winning/**
 
-![The W-Trilogy deal check on the WIWI tab, showing a score of 1.01, "Thin margin"](docs/screenshot.png)
+![Worth Winning on the WIWI tab, showing a score of 1.01, "Thin margin"](docs/screenshot.png)
 
 ## The formula
 

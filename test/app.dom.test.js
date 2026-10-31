@@ -3,7 +3,7 @@ import { test, describe, before } from 'node:test';
 import assert from 'node:assert/strict';
 import { loadPage, settle } from './helpers/load-page.js';
 
-const START_URL = 'https://example.test/wiwi-calculator/?n=Shared+deal&c=AED&v=200000&p=50&d=50000&o=10000&f=10000';
+const START_URL = 'https://example.test/worth-winning/?n=Shared+deal&c=AED&v=200000&p=50&d=50000&o=10000&f=10000';
 
 let window;
 let $;

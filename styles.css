@@ -398,7 +398,7 @@ body:not([data-stage="wiwi"]) .mini-score { display: none !important; }
   /* Ctrl+P before unlocking prints a pointer to the page, not the report */
   body:not(.unlocked) .hero, body:not(.unlocked) main { display: none; }
   body:not(.unlocked)::before {
-    content: "Unlock the free report at shamoilp.github.io/wiwi-calculator";
+    content: "Unlock the free report at shamoilp.github.io/worth-winning";
     display: block; padding: 24px 0; font-size: 18px; font-weight: 600;
   }
   .layout { display: block; margin: 0; }

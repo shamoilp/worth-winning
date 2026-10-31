@@ -3,7 +3,7 @@ import { test, describe, before } from 'node:test';
 import assert from 'node:assert/strict';
 import { loadPage } from './helpers/load-page.js';
 
-const START_URL = 'https://example.test/wiwi-calculator/?v=400000&p=35&d=90000&o=30000#wifi';
+const START_URL = 'https://example.test/worth-winning/?v=400000&p=35&d=90000&o=30000#wifi';
 
 let page;
 const visible = (id) => !page.$(id).hidden;

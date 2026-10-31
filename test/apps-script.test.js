@@ -66,7 +66,7 @@ const lead = {
   verdict: 'Thin margin',
   redFlags: 2,
   stopRule: 'costs pass SAR 120,000',
-  page: 'https://shamoilp.github.io/wiwi-calculator/',
+  page: 'https://shamoilp.github.io/worth-winning/',
   website: '',
 };
 

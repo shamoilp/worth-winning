@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { loadPage, settle } from './helpers/load-page.js';
 
 const ENDPOINT = 'https://script.google.com/macros/s/TEST/exec';
-const START_URL = 'https://example.test/wiwi-calculator/?v=300000&p=60&d=80000&o=20000';
+const START_URL = 'https://example.test/worth-winning/?v=300000&p=60&d=80000&o=20000';
 
 const requests = [];
 let nextReply = { ok: true };

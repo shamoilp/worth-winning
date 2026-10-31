@@ -70,7 +70,7 @@ describe('buildLeadPayload', () => {
       result,
       lead: { ...goodLead, name: '  Fatima Al-Harbi ', website: '' },
       action: 'pdf',
-      page: 'https://shamoilp.github.io/wiwi-calculator/',
+      page: 'https://shamoilp.github.io/worth-winning/',
     });
     // Assert
     assert.equal(payload.name, 'Fatima Al-Harbi');
