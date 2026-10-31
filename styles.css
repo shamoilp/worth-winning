@@ -93,6 +93,9 @@ a { color: var(--brand); text-underline-offset: 2px; }
 .band.thin::before { background: #d9b867; }
 .band.win::before { background: #2bb3a3; }
 
+.why-name { margin: 14px 0 0; max-width: 60ch; color: #cfe6e1; font-size: 14px; }
+.why-name em { color: #f5e6c4; }
+
 .formula {
   display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap;
   margin: 0; padding: 12px 18px;
@@ -299,7 +302,7 @@ body.unlocked .unlock-note { display: none; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .print-only { display: block; }
   .print-only h3 { font-size: 13px; margin: 12px 0 6px; text-transform: uppercase; letter-spacing: .06em; }
-  .hero .lede, .hero .eyebrow, .hero .explain, .hero .formula, .hero .bands, .footer { display: none; }
+  .hero .lede, .hero .eyebrow, .hero .explain, .hero .formula, .hero .bands, .hero .why-name, .footer { display: none; }
   .hero { padding: 0 0 8px; }
   .hero h1 { font-size: 22px; }
   .panel { padding: 14px 18px; }

@@ -61,7 +61,7 @@ There are 69 tests: the formula, validation and share links (`src/wiwi.js`), the
 
 ## Credit
 
-The WIWI formula and the idea of an "ego tax" come from the article **"ROI of Ego"** in *Business Advisor* (Shrinikethan, Chennai; edited by [D. Murali](https://www.linkedin.com/in/muralide/)), issue of 25 October 2026. The 1.5 band, red-flag questions, ego-tax suggestion and break-even figure are this tool's additions.
+The WIWI formula and the idea of an "ego tax" come from D. Murali's article [**"WIWI: The ROI of Ego and the Art of the Post-Mortem"**](https://www.linkedin.com/pulse/wiwi-roi-ego-art-post-mortem-part-3-w-trilogy-d-murali--njejc/) (Part 3 of his W-Trilogy), featured in *Business Advisor* (Shrinikethan, Chennai), 25 October 2026. "WIWI" isn't an acronym: it's his "Corporate Latin" nod to Caesar's *vici* ("I conquered"). The 1.5 band, red-flag questions, ego-tax suggestion and break-even figure are this tool's additions.
 
 This is a thinking aid, not financial advice.
 
