@@ -78,6 +78,21 @@ a { color: var(--brand); text-underline-offset: 2px; }
 .hero h1 { margin: 0; font-size: clamp(30px, 5vw, 46px); line-height: 1.1; letter-spacing: -.02em; }
 .lede { margin: 12px 0 24px; max-width: 46ch; color: #d8ede9; font-size: 18px; }
 
+.explain { margin: -8px 0 20px; max-width: 54ch; color: #e6f3f0; font-size: 17px; }
+.explain strong { color: #fff; }
+.explain em { color: #f5e6c4; font-style: normal; font-weight: 600; }
+
+.bands { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
+.band {
+  display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 999px;
+  background: rgb(255 255 255 / 10%); border: 1px solid rgb(255 255 255 / 18%); color: #e6f3f0; font-size: 14px;
+}
+.band::before { content: ""; width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.band strong { color: #fff; }
+.band.regret::before { background: #e0775e; }
+.band.thin::before { background: #d9b867; }
+.band.win::before { background: #2bb3a3; }
+
 .formula {
   display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap;
   margin: 0; padding: 12px 18px;
@@ -87,7 +102,7 @@ a { color: var(--brand); text-underline-offset: 2px; }
 .formula-name { font-weight: 700; color: #f5e6c4; letter-spacing: .04em; }
 @media (max-width: 480px) {
   .hero { padding: 32px 0 36px; }
-  .lede { font-size: 16px; }
+  .lede, .explain { font-size: 16px; }
   .formula { gap: 8px; padding: 10px 12px; font-size: 14px; }
 }
 .frac { display: inline-flex; flex-direction: column; text-align: center; }
@@ -284,7 +299,7 @@ body.unlocked .unlock-note { display: none; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .print-only { display: block; }
   .print-only h3 { font-size: 13px; margin: 12px 0 6px; text-transform: uppercase; letter-spacing: .06em; }
-  .hero .lede, .hero .eyebrow, .hero .formula, .footer { display: none; }
+  .hero .lede, .hero .eyebrow, .hero .explain, .hero .formula, .hero .bands, .footer { display: none; }
   .hero { padding: 0 0 8px; }
   .hero h1 { font-size: 22px; }
   .panel { padding: 14px 18px; }
