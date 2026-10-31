@@ -43,7 +43,7 @@ export function isAcceptedReply(reply) {
 }
 
 /** Everything the lead sheet stores: who they are, what they unlocked, and the deal they scored. */
-export function buildLeadPayload({ state, result, lead, action, page }) {
+export function buildLeadPayload({ state, result, lead, action, page, trilogy = {} }) {
   return {
     name: trimmed(lead.name),
     email: trimmed(lead.email),
@@ -63,6 +63,9 @@ export function buildLeadPayload({ state, result, lead, action, page }) {
     redFlags: state.flags.filter(Boolean).length,
     stopRule: trimmed(state.stopRule),
     page,
+    wifi: trimmed(trilogy.wifi),
+    widi: trimmed(trilogy.widi),
+    postMortem: trimmed(trilogy.postMortem),
     website: String(lead.website ?? ''),
   };
 }

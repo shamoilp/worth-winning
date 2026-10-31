@@ -7,7 +7,7 @@ const SHEET_NAME = 'Leads';
 const HEADERS = [
   'Received', 'Name', 'Email', 'WhatsApp', 'Wants review', 'Unlocked for', 'Deal name', 'Currency',
   'Value', 'Chance %', 'Direct cost', 'Opportunity cost', 'Ego tax', 'WIWI score', 'Verdict',
-  'Red flags ticked', 'Stop rule', 'Page',
+  'Red flags ticked', 'Stop rule', 'Page', 'WIFI check', 'WIDI check', 'Post-mortem',
 ];
 const MAX_BODY_CHARS = 4000;
 const MAX_TEXT = 120;
@@ -60,11 +60,24 @@ function saveLead_(row) {
     cache.put(RATE_KEY, String(count + 1), WINDOW_SECONDS);
     const sheet = leadSheet_();
     if (sheet.getLastRow() === 0) sheet.appendRow(HEADERS);
+    else syncHeaders_(sheet);
     sheet.appendRow(row);
     return true;
   } finally {
     lock.releaseLock();
   }
+}
+
+/**
+ * Gives new columns their titles without manual edits. Only blank titles are filled, so titles the
+ * owner renamed stay, and row 1 is left alone entirely if it doesn't start with our first title.
+ */
+function syncHeaders_(sheet) {
+  const range = sheet.getRange(1, 1, 1, HEADERS.length);
+  const current = range.getValues()[0];
+  if (current[0] !== HEADERS[0]) return;
+  const filled = current.map((title, index) => (title === '' ? HEADERS[index] : title));
+  if (filled.some((title, index) => title !== current[index])) range.setValues([filled]);
 }
 
 function leadSheet_() {
@@ -97,6 +110,9 @@ function buildRow_(data, received) {
     number_(data.redFlags),
     text_(data.stopRule, MAX_STOP_RULE),
     text_(data.page, MAX_TEXT),
+    text_(data.wifi, MAX_TEXT),
+    text_(data.widi, MAX_TEXT),
+    text_(data.postMortem, MAX_TEXT),
   ];
 }
 

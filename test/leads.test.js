@@ -86,6 +86,21 @@ describe('buildLeadPayload', () => {
     assert.equal(payload.redFlags, 2);
     assert.equal(payload.stopRule, 'costs pass SAR 120,000');
     assert.equal(payload.website, '');
+    assert.equal(payload.wifi, '');
+  });
+
+  test('carries the WIFI, WIDI and post-mortem summaries', () => {
+    const payload = buildLeadPayload({
+      state,
+      result: computeWiwi(state),
+      lead: goodLead,
+      action: 'pdf',
+      page: '',
+      trilogy: { wifi: 'Clear-eyed', widi: 'Healthy momentum', postMortem: '1.20 Narrow win' },
+    });
+    assert.equal(payload.wifi, 'Clear-eyed');
+    assert.equal(payload.widi, 'Healthy momentum');
+    assert.equal(payload.postMortem, '1.20 Narrow win');
   });
 
   test('passes the hidden spam-trap field through so the server can drop bots', () => {

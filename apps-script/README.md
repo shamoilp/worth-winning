@@ -42,6 +42,8 @@ Commit and push. GitHub Pages updates in about a minute.
 
 Edit `Code.gs`, then **Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy**. This keeps the same URL. A *new* deployment would get a new URL, and you'd have to update `index.html` again.
 
+Each row ends with three W-Trilogy columns: **WIFI check**, **WIDI check** and **Post-mortem**, one plain-language line each (blank if the visitor skipped that tab). On the next save the script fills in any blank titles in row 1, so new columns get their titles without manual edits. Titles you've renamed are kept. Older rows simply have those cells blank.
+
 ## What it guards against
 
 | Risk | Guard |

@@ -13,6 +13,9 @@ import {
   suggestEgoTax,
 } from './wiwi.js';
 import { buildLeadPayload, isAcceptedReply, validateLead } from './leads.js';
+import { decodeTrilogy, encodeTrilogy, summarizeTrilogy } from './trilogy.js';
+import { applyTrilogy, currentStage, initStages, readTrilogy, renderTrilogy } from './stages.js';
+import { $, isBlank } from './ui.js';
 
 const UNLOCK_KEY = 'wiwi-unlocked';
 const REQUEST_TIMEOUT_MS = 15000;
@@ -34,9 +37,6 @@ const EXAMPLE = Object.freeze({
   flags: [true, false, true, false, false],
   stopRule: 'costs pass SAR 120,000, or there is no signed contract by 31 December',
 });
-
-const $ = (id) => document.getElementById(id);
-const isBlank = (text) => String(text ?? '').trim() === '';
 
 function formatMoney(amount, currency) {
   try {
@@ -154,32 +154,45 @@ function showResult(result, state) {
   renderPrintSummary(state);
 }
 
-function updateAddressBar(state) {
-  const query = encodeState(state);
+/** The share-link query for everything on the page: the WIWI form plus any trilogy answers. */
+const shareQuery = () => [encodeState(readState()), encodeTrilogy(readTrilogy())].filter(Boolean).join('&');
+
+function updateAddressBar() {
+  const query = shareQuery();
   try {
-    history.replaceState(null, '', query ? `?${query}` : location.pathname);
+    history.replaceState(null, '', `${query ? `?${query}` : location.pathname}${location.hash}`);
   } catch (error) {
     console.warn('Could not update the address bar:', error);
   }
+}
+
+/** Draws the WIWI result and returns it, or null when there is no score to show yet. */
+function renderWiwi(state) {
+  if (showFieldErrors(state)) {
+    showEmpty('Fix the highlighted field to see the score.');
+    return null;
+  }
+  const result = computeWiwi(state);
+  if (isBlank(state.value) || isBlank(state.chance) || !result.ok) {
+    showEmpty("Enter what it's worth, your chance of success and at least one cost to see the score.");
+    return null;
+  }
+  showResult(result, state);
+  return result;
 }
 
 function render() {
   const state = readState();
   $('status').textContent = '';
   renderSuggestion(state);
-  if (isUnlocked()) updateAddressBar(state); // while locked, the address bar must not hand out the share link
-
-  if (showFieldErrors(state)) return showEmpty('Fix the highlighted field to see the score.');
-  const result = computeWiwi(state);
-  if (isBlank(state.value) || isBlank(state.chance) || !result.ok) {
-    return showEmpty("Enter what it's worth, your chance of success and at least one cost to see the score.");
-  }
-  return showResult(result, state);
+  if (isUnlocked()) updateAddressBar(); // while locked, the address bar must not hand out the share link
+  const result = renderWiwi(state);
+  renderTrilogy(readTrilogy(), result ? result.score : null);
 }
 
 async function copyShareLink() {
-  const query = encodeState(readState());
-  const link = `${location.origin}${location.pathname}${query ? `?${query}` : ''}`;
+  const query = shareQuery();
+  const link = `${location.origin}${location.pathname}${query ? `?${query}` : ''}#${currentStage()}`;
   try {
     await navigator.clipboard.writeText(link);
     $('status').textContent = 'Link copied. Anyone who opens it sees these numbers.';
@@ -209,7 +222,7 @@ function unlock() {
   } catch (error) {
     console.warn('Could not remember the unlock in this browser:', error);
   }
-  updateAddressBar(readState());
+  updateAddressBar();
 }
 
 function runAction(action) {
@@ -281,7 +294,8 @@ async function submitLead(event) {
   $('unlock-submit').disabled = true;
   $('unlock-status').textContent = 'Saving…';
   try {
-    await sendLead(buildLeadPayload({ state, result: computeWiwi(state), lead, action, page }));
+    const trilogy = summarizeTrilogy(readTrilogy());
+    await sendLead(buildLeadPayload({ state, result: computeWiwi(state), lead, action, page, trilogy }));
     unlock();
     closeUnlockDialog();
     runAction(action);
@@ -338,7 +352,9 @@ function bindEvents() {
 
 if (!leadEndpoint() || rememberedUnlock()) document.body.classList.add('unlocked');
 buildControls();
+initStages({ onChange: render });
 applyState(decodeState(location.search));
+applyTrilogy(decodeTrilogy(location.search));
 bindEvents();
 bindUnlockEvents();
 render();

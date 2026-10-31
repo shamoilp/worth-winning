@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WIWI Deal Calculator</title>
-  <meta name="description" content="Is this deal worth winning? Score any deal, bid or project with the WIWI formula before you commit. Free, runs in your browser.">
+  <title>W-Trilogy Deal Check</title>
+  <meta name="description" content="Is this deal worth winning? Three free checks from the W-Trilogy: WIFI before you chase it, WIDI while you are in it, and the WIWI score. Runs in your browser.">
   <!-- Apps Script web-app URL (ends in /exec). Blank = no lead capture; PDF and share link stay open. -->
   <meta name="lead-endpoint" content="https://script.google.com/macros/s/AKfycbyKhndg1zqHLUVoUtWPNK6CaK1ZskfL1vDTsv9HUZvqabLNooN9Rq_s05EM0Fwolqb3/exec">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f766e'/%3E%3Cpath d='M14 40h36M22 40V28M32 40V20M42 40V32' stroke='%23c8a24a' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -14,10 +14,127 @@
 <body>
   <header class="hero">
     <div class="wrap">
-      <p class="eyebrow">WIWI score · free deal check</p>
+      <p class="eyebrow">The W-Trilogy deal check · free</p>
       <h1>Is this deal worth winning?</h1>
-      <p class="lede">Score a deal, bid, hire or project before you commit. Five numbers, about two minutes. Your numbers stay in your browser until you choose to send them.</p>
+      <p class="lede">Three quick checks for any deal, bid, hire or project: before you chase it, while you're in it, and when you score it. Your numbers stay in your browser until you choose to send them.</p>
+    </div>
+  </header>
+
+  <main class="wrap layout">
+    <nav class="stages" role="tablist" aria-label="W-Trilogy stages">
+      <button type="button" role="tab" id="tab-wifi" class="stage-tab" data-stage="wifi" aria-controls="stage-wifi" aria-selected="false">
+        <span class="tab-num">1</span><span class="tab-name">WIFI</span><span class="tab-when">Before you chase it</span>
+      </button>
+      <button type="button" role="tab" id="tab-widi" class="stage-tab" data-stage="widi" aria-controls="stage-widi" aria-selected="false">
+        <span class="tab-num">2</span><span class="tab-name">WIDI</span><span class="tab-when">While you're in it</span>
+      </button>
+      <button type="button" role="tab" id="tab-wiwi" class="stage-tab" data-stage="wiwi" aria-controls="stage-wiwi" aria-selected="true">
+        <span class="tab-num">3</span><span class="tab-name">WIWI</span><span class="tab-when">Score it</span>
+      </button>
+    </nav>
+
+    <section id="stage-wifi" class="stage" role="tabpanel" aria-labelledby="tab-wifi" tabindex="0" hidden>
+      <div class="stage-intro">
+        <p class="eyebrow">Part 1 · Before you chase it</p>
+        <h2>WIFI: Want It, Find It</h2>
+        <p class="explain">Once you badly want something, you stop seeing its flaws. Strip away the name, the rival and the trophy, and check whether you still want it.</p>
+      </div>
+      <div class="panel stage-body">
+        <h3>The WIFI filter</h3>
+        <div id="wifi-questions" class="questions"></div>
+
+        <h3>Feeling vs reality</h3>
+        <div class="row halves">
+          <div class="field">
+            <label class="label" for="perceived">What it feels worth</label>
+            <input id="perceived" type="text" inputmode="decimal" maxlength="20" placeholder="500,000">
+          </div>
+          <div class="field">
+            <label class="label" for="actual">What it will actually earn or save</label>
+            <input id="actual" type="text" inputmode="decimal" maxlength="20" placeholder="200,000">
+          </div>
+        </div>
+        <p class="hype" id="hype-text" aria-live="polite"></p>
+
+        <div role="status">
+          <div id="wifi-verdict" class="verdict-box" hidden>
+            <p class="verdict" id="wifi-label"></p>
+            <p id="wifi-advice"></p>
+          </div>
+        </div>
+
+        <div class="stage-actions">
+          <button type="button" id="use-actual" class="btn" hidden>Use the real value in my WIWI score →</button>
+          <button type="button" class="btn ghost" data-go="widi">Next: WIDI check →</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="stage-widi" class="stage" role="tabpanel" aria-labelledby="tab-widi" tabindex="0" hidden>
+      <div class="stage-intro">
+        <p class="eyebrow">Part 2 · While you're in it</p>
+        <h2>WIDI: Will It, Do It</h2>
+        <p class="explain">You can see the cost climbing, but momentum and pride keep you going. Check the warning signs, then re-score as if you were starting today.</p>
+        <p class="why-name">WIDI is D. Murali's nod to Caesar's <em>vidi</em> (“I saw”): you see the cliff, and go anyway.</p>
+      </div>
+      <div class="panel stage-body">
+        <h3>Warning signs</h3>
+        <div id="widi-questions" class="questions"></div>
+
+        <div role="status">
+          <div id="widi-verdict" class="verdict-box" hidden>
+            <p class="verdict" id="widi-label"></p>
+            <p id="widi-advice"></p>
+          </div>
+        </div>
+
+        <h3>Fresh-eyes re-score</h3>
+        <p class="hint block">Money already spent is gone whether you stop or not, so it doesn't count. Would you start this today, for what's left?</p>
+        <div class="row halves">
+          <div class="field">
+            <label class="label" for="freshValue">What it's worth if it works</label>
+            <input id="freshValue" type="text" inputmode="decimal" maxlength="20" placeholder="400,000">
+          </div>
+          <div class="field">
+            <label class="label" for="freshChance">Chance of success from here (%)</label>
+            <input id="freshChance" type="text" inputmode="decimal" maxlength="6" placeholder="40">
+          </div>
+          <div class="field">
+            <label class="label" for="spent">Spent so far</label>
+            <input id="spent" type="text" inputmode="decimal" maxlength="20" placeholder="150,000">
+          </div>
+          <div class="field">
+            <label class="label" for="remaining">Still to spend</label>
+            <input id="remaining" type="text" inputmode="decimal" maxlength="20" placeholder="60,000">
+          </div>
+          <div class="field">
+            <label class="label" for="remainingOpportunity">What that money and time could earn elsewhere</label>
+            <input id="remainingOpportunity" type="text" inputmode="decimal" maxlength="20" placeholder="20,000">
+          </div>
+        </div>
+        <div role="status">
+          <p class="hint" id="fresh-status"></p>
+          <div id="fresh-result" class="verdict-box" hidden>
+            <p class="score-line">Fresh-eyes score <strong id="fresh-score"></strong> · <span id="fresh-label"></span></p>
+            <p id="fresh-sunk"></p>
+          </div>
+        </div>
+
+        <div class="stage-actions">
+          <button type="button" class="btn ghost" data-go="wiwi">Next: WIWI score →</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="stage-wiwi" class="stage-wiwi" role="tabpanel" aria-labelledby="tab-wiwi" tabindex="0">
+    <div id="wiwi-intro" class="stage-intro split">
+      <div>
+      <p class="eyebrow">Part 3 · Score it, or look back</p>
+      <h2>WIWI: the ROI of Ego</h2>
       <p class="explain">Your <strong>WIWI score</strong> is one number that says whether a win is worth chasing. It weighs the realistic payoff against everything the deal costs you, including the <em>ego tax</em>: the extra you'd pay just to avoid backing down.</p>
+      <p class="why-name">Why “WIWI”? It's D. Murali's tongue-in-cheek “Corporate Latin”, a nod to Caesar's <em>vici</em> (“I conquered”). The score asks whether the conquest is worth it.</p>
+      </div>
+      <div>
       <p class="formula" aria-label="WIWI equals value times chance, divided by direct cost plus opportunity cost plus ego tax">
         <span class="formula-name">WIWI</span> =
         <span class="frac">
@@ -30,11 +147,9 @@
         <li class="band thin"><strong>1.0 – 1.5</strong> thin, set limits</li>
         <li class="band win"><strong>1.5+</strong> worth pursuing</li>
       </ul>
-      <p class="why-name">Why “WIWI”? It's D. Murali's tongue-in-cheek “Corporate Latin”, a nod to Caesar's <em>vici</em> (“I conquered”). The score asks whether the conquest is worth it.</p>
+      </div>
     </div>
-  </header>
 
-  <main class="wrap layout">
     <form id="wiwi-form" class="panel" novalidate autocomplete="off">
       <section aria-labelledby="step-numbers">
         <h2 id="step-numbers"><span class="step">1</span> The numbers</h2>
@@ -111,13 +226,46 @@
         </div>
       </section>
 
+      <section aria-labelledby="step-pm">
+        <details id="pm-details" class="pm">
+          <summary><h2 id="step-pm"><span class="step">4</span> Already done? Run the post-mortem</h2></summary>
+          <p class="hint block">Score the finished deal on what really happened. Chance no longer matters: it's done.</p>
+          <div class="row halves">
+            <div class="field">
+              <label class="label" for="actualValue">What it actually delivered</label>
+              <input id="actualValue" name="actualValue" type="text" inputmode="decimal" maxlength="20" placeholder="300,000">
+            </div>
+            <div class="field">
+              <label class="label" for="actualDirect">What it actually cost</label>
+              <input id="actualDirect" name="actualDirect" type="text" inputmode="decimal" maxlength="20" placeholder="180,000">
+            </div>
+            <div class="field">
+              <label class="label" for="actualOpportunity">What you gave up for it</label>
+              <input id="actualOpportunity" name="actualOpportunity" type="text" inputmode="decimal" maxlength="20" placeholder="40,000">
+            </div>
+            <div class="field">
+              <label class="label" for="egoPaid">What pride cost you</label>
+              <input id="egoPaid" name="egoPaid" type="text" inputmode="decimal" maxlength="20" placeholder="20,000">
+            </div>
+          </div>
+          <div role="status">
+            <p class="hint" id="pm-status"></p>
+            <div id="pm-result" class="verdict-box" hidden>
+              <p class="score-line">Actual WIWI <strong id="pm-score"></strong> · <span id="pm-label"></span></p>
+              <p id="pm-advice"></p>
+              <p id="pm-compare"></p>
+            </div>
+          </div>
+        </details>
+      </section>
+
       <div class="form-actions">
         <button type="button" id="load-example" class="btn ghost">Load an example</button>
         <button type="reset" id="clear" class="btn ghost">Clear</button>
       </div>
     </form>
 
-    <aside class="panel result" aria-labelledby="result-title">
+    <aside id="result-panel" class="panel result" aria-labelledby="result-title">
       <h2 id="result-title" class="sr-only">Your result</h2>
       <div id="result-empty" class="empty">
         <p class="big-dash" aria-hidden="true">–</p>
@@ -160,6 +308,12 @@
           <ul id="print-flags"></ul>
           <h3>Stop rule</h3>
           <p id="print-stop"></p>
+          <div id="print-trilogy" hidden>
+            <h3>W-Trilogy checks</h3>
+            <p id="print-wifi-block" hidden><strong>Before (WIFI):</strong> <span id="print-wifi"></span></p>
+            <p id="print-widi-block" hidden><strong>During (WIDI):</strong> <span id="print-widi"></span></p>
+            <p id="print-pm-block" hidden><strong>After (post-mortem):</strong> <span id="print-pm"></span></p>
+          </div>
           <p class="print-date" id="print-date"></p>
         </div>
 
@@ -171,6 +325,7 @@
         <p class="status" id="status" role="status"></p>
       </div>
     </aside>
+    </div>
   </main>
 
   <dialog id="unlock-dialog" class="unlock" aria-labelledby="unlock-title">
@@ -204,7 +359,7 @@
       </label>
       <label class="check">
         <input type="checkbox" id="lead-consent" aria-describedby="lead-consent-error">
-        <span>Send my contact details and this deal (its name, numbers, red flags and stop rule) to Shamoil Plumber, who may contact me about it.</span>
+        <span>Send my contact details and this deal (its name, numbers, red flags, stop rule and a one-line summary of any WIFI, WIDI or post-mortem check I did) to Shamoil Plumber, who may contact me about it.</span>
       </label>
       <span class="error" id="lead-consent-error" role="alert"></span>
 
@@ -233,14 +388,14 @@
   </a>
 
   <div class="print-only print-brand">
-    <p><strong>Prepared with the free WIWI deal calculator:</strong> shamoilp.github.io/wiwi-calculator</p>
+    <p><strong>Prepared with the free W-Trilogy deal check:</strong> shamoilp.github.io/wiwi-calculator</p>
     <p>Shamoil Plumber · Accountant &amp; tax advisor, Saudi Arabia · shamoilp@outlook.com · linkedin.com/in/shamoilp</p>
-    <p class="print-credit">Formula from D. Murali, “WIWI: The ROI of Ego and the Art of the Post-Mortem”, <em>Business Advisor</em>, 25 Oct 2026. A thinking aid, not financial advice.</p>
+    <p class="print-credit">Based on D. Murali's W-Trilogy (WIFI, WIDI, WIWI), <em>Business Advisor</em>, 25 Oct 2026. A thinking aid, not financial advice.</p>
   </div>
 
   <footer class="wrap footer">
-    <p>Formula from D. Murali's article <a href="https://www.linkedin.com/pulse/wiwi-roi-ego-art-post-mortem-part-3-w-trilogy-d-murali--njejc/" rel="noopener"><strong>“WIWI: The ROI of Ego and the Art of the Post-Mortem”</strong></a> (Part 3 of his W-Trilogy), featured in <em>Business Advisor</em> (Shrinikethan, Chennai), 25 Oct 2026. The 1.5 band, red-flag check and ego-tax suggestion are this tool's additions.</p>
-    <p id="privacy"><strong>Privacy.</strong> Your numbers stay in your browser while you use the calculator. If you unlock the report, your name, contact details and the deal you entered (name, numbers, red flags and stop rule) are saved to a private Google Sheet owned by Shamoil Plumber and used only to contact you about that deal. To see or delete them, email <a href="mailto:shamoilp@outlook.com">shamoilp@outlook.com</a>.</p>
+    <p>Based on D. Murali's W-Trilogy, featured in <em>Business Advisor</em> (Shrinikethan, Chennai), 25 Oct 2026: <a href="https://www.linkedin.com/pulse/wifi-widi-wiwi-guide-conquering-things-youll-regret-part-d-murali--ydzmc/" rel="noopener">Part 1, “WIFI, WIDI, WIWI: A Guide to Conquering Things You'll Eventually Regret”</a>; <a href="https://www.linkedin.com/pulse/widi-art-vertical-pivot-part-2-w-trilogy-d-murali--rzyfc/" rel="noopener">Part 2, “WIDI: The Art of the Vertical Pivot”</a>; <a href="https://www.linkedin.com/pulse/wiwi-roi-ego-art-post-mortem-part-3-w-trilogy-d-murali--njejc/" rel="noopener">Part 3, “WIWI: The ROI of Ego and the Art of the Post-Mortem”</a>. The question wording, score bands, red-flag check, ego-tax suggestion and fresh-eyes re-score are this tool's own reading of the articles.</p>
+    <p id="privacy"><strong>Privacy.</strong> Your numbers stay in your browser while you use the calculator. If you unlock the report, your name, contact details and the deal you entered (name, numbers, red flags, stop rule and a one-line summary of any WIFI, WIDI or post-mortem check you did) are saved to a private Google Sheet owned by Shamoil Plumber and used only to contact you about that deal. To see or delete them, email <a href="mailto:shamoilp@outlook.com">shamoilp@outlook.com</a>.</p>
     <p>Built by <a href="https://github.com/shamoilp">Shamoil Plumber</a>, accountant and tax advisor in Saudi Arabia · <a href="https://github.com/shamoilp/wiwi-calculator">Source on GitHub</a> · MIT licence. A thinking aid, not financial advice.</p>
   </footer>
 </body>

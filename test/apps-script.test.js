@@ -15,6 +15,10 @@ function loadScript() {
     getLastRow: () => rows.length,
     appendRow: (row) => rows.push(row),
     setName(name) { this.name = name; },
+    getRange: (row, column, numRows, numColumns) => ({
+      getValues: () => [Array.from({ length: numColumns }, (_, i) => rows[row - 1]?.[column - 1 + i] ?? '')],
+      setValues: (values) => { rows[row - 1] = values[0].slice(); },
+    }),
   };
   const spreadsheet = {
     getSheetByName: (name) => (sheet.name === name ? sheet : null),
@@ -153,6 +157,37 @@ describe('Apps Script lead endpoint', () => {
     script.context.doPost({ postData: { contents: '{"name":"Secret Person", broken' } });
     assert.equal(script.logs.length, 1);
     assert.doesNotMatch(script.logs[0], /Secret/);
+  });
+
+  test('saves the WIFI, WIDI and post-mortem summaries in three extra columns', () => {
+    post(script.context, { ...lead, wifi: 'Clear-eyed', widi: '=cmd', postMortem: '1.20 Narrow win' });
+    const row = script.rows[1];
+    assert.equal(row.length, 21);
+    assert.equal(row[18], 'Clear-eyed');
+    assert.equal(row[19], "''=cmd");
+    assert.equal(row[20], '1.20 Narrow win');
+  });
+
+  test('brings an older 18-column header row up to date', () => {
+    script.rows.push(['Received', 'Name']);
+    post(script.context, lead);
+    assert.equal(script.rows[0].length, 21);
+    assert.equal(script.rows[0][18], 'WIFI check');
+    assert.equal(script.rows[0][20], 'Post-mortem');
+  });
+
+  test('keeps column titles the owner renamed, and only fills blank ones', () => {
+    script.rows.push(['Received', 'Full name']);
+    post(script.context, lead);
+    assert.equal(script.rows[0][1], 'Full name');
+    assert.equal(script.rows[0][2], 'Email');
+  });
+
+  test('leaves row 1 alone when it is not a header row', () => {
+    script.rows.push(['Ali', 'ali@example.com']);
+    post(script.context, lead);
+    assert.deepEqual(script.rows[0], ['Ali', 'ali@example.com']);
+    assert.equal(script.rows.length, 2, 'the lead is still saved');
   });
 
   test('answers a health check', () => {
