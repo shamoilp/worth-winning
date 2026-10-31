@@ -1,38 +1,18 @@
 // Drives the real index.html + src/app.js in jsdom: typing, buttons and share links.
 import { test, describe, before } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { JSDOM } from 'jsdom';
+import { loadPage, settle } from './helpers/load-page.js';
 
-const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const START_URL = 'https://example.test/wiwi-calculator/?n=Shared+deal&c=AED&v=200000&p=50&d=50000&o=10000&f=10000';
 
 let window;
 let $;
-
-function type(id, text) {
-  const input = $(id);
-  input.value = text;
-  input.dispatchEvent(new window.Event('input', { bubbles: true }));
-}
-
-function click(id) {
-  $(id).dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
-}
-
-function tick(id, checked) {
-  $(id).checked = checked;
-  $(id).dispatchEvent(new window.Event('change', { bubbles: true }));
-}
+let type;
+let click;
+let tick;
 
 before(async () => {
-  const dom = new JSDOM(html, { url: START_URL, pretendToBeVisual: true });
-  window = dom.window;
-  $ = (id) => window.document.getElementById(id);
-  for (const key of ['window', 'document', 'location', 'history', 'Option', 'navigator']) {
-    Object.defineProperty(globalThis, key, { value: window[key], configurable: true, writable: true });
-  }
-  await import('../src/app.js');
+  ({ window, $, type, click, tick } = await loadPage({ url: START_URL }));
 });
 
 describe('page wiring', () => {
@@ -54,6 +34,13 @@ describe('page wiring', () => {
     // 100,000 / 100,000 = 1.00
     assert.equal($('out-score').textContent, '1.00');
     assert.equal(window.document.querySelector('.result').dataset.verdict, 'thin');
+  });
+
+  test('with no lead endpoint set, the report is unlocked for everyone', () => {
+    assert.ok(window.document.body.classList.contains('unlocked'));
+    click('print');
+    assert.equal(window.printCount, 1);
+    assert.equal($('unlock-dialog').hasAttribute('open'), false);
   });
 
   test('keeps the address bar in step with the form', () => {
@@ -114,7 +101,7 @@ describe('page wiring', () => {
 
   test('shows the empty state until the key numbers are in', async () => {
     $('wiwi-form').reset();
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await settle();
     assert.equal($('result-empty').hidden, false);
     assert.equal($('result-body').hidden, true);
     assert.equal($('mini-score').hidden, true);

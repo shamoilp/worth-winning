@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>WIWI Deal Calculator</title>
   <meta name="description" content="Is this deal worth winning? Score any deal, bid or project with the WIWI formula before you commit. Free, runs in your browser.">
+  <!-- Apps Script web-app URL (ends in /exec). Blank = no lead capture; PDF and share link stay open. -->
+  <meta name="lead-endpoint" content="">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f766e'/%3E%3Cpath d='M14 40h36M22 40V28M32 40V20M42 40V32' stroke='%23c8a24a' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="src/app.js"></script>
@@ -14,7 +16,7 @@
     <div class="wrap">
       <p class="eyebrow">WIWI score · free deal check</p>
       <h1>Is this deal worth winning?</h1>
-      <p class="lede">Score a deal, bid, hire or project before you commit. Five numbers, about two minutes. Everything stays in your browser.</p>
+      <p class="lede">Score a deal, bid, hire or project before you commit. Five numbers, about two minutes. Your numbers stay in your browser until you choose to send them.</p>
       <p class="formula" aria-label="WIWI equals value times chance, divided by direct cost plus opportunity cost plus ego tax">
         <span class="formula-name">WIWI</span> =
         <span class="frac">
@@ -147,13 +149,67 @@
         </div>
 
         <div class="result-actions">
-          <button type="button" id="copy-link" class="btn">Copy share link</button>
-          <button type="button" id="print" class="btn ghost">Print / save PDF</button>
+          <button type="button" id="print" class="btn">Print / save PDF</button>
+          <button type="button" id="copy-link" class="btn ghost">Copy share link</button>
         </div>
+        <p class="hint unlock-note">Free. Leave your name and an email or WhatsApp number to unlock the report.</p>
         <p class="status" id="status" role="status"></p>
       </div>
     </aside>
   </main>
+
+  <dialog id="unlock-dialog" class="unlock" aria-labelledby="unlock-title">
+    <form id="unlock-form" novalidate autocomplete="on">
+      <h2 id="unlock-title">Unlock your report</h2>
+      <p class="unlock-lede">Enter your details to <span id="unlock-action-text">download your PDF report</span>. It's free, and the score stays free too.</p>
+
+      <div class="field">
+        <label class="label" for="lead-name">Your name</label>
+        <input id="lead-name" type="text" autocomplete="name" maxlength="80" aria-describedby="lead-name-error">
+        <span class="error" id="lead-name-error" role="alert"></span>
+      </div>
+
+      <div class="row halves">
+        <div class="field">
+          <label class="label" for="lead-email">Email</label>
+          <input id="lead-email" type="email" autocomplete="email" maxlength="120" aria-describedby="lead-contact-hint lead-email-error">
+          <span class="error" id="lead-email-error" role="alert"></span>
+        </div>
+        <div class="field">
+          <label class="label" for="lead-whatsapp">WhatsApp</label>
+          <input id="lead-whatsapp" type="tel" autocomplete="tel" maxlength="20" placeholder="+966 50 123 4567" aria-describedby="lead-contact-hint lead-whatsapp-error">
+          <span class="error" id="lead-whatsapp-error" role="alert"></span>
+        </div>
+      </div>
+      <p class="hint block" id="lead-contact-hint">Email or WhatsApp: one is enough.</p>
+
+      <label class="check">
+        <input type="checkbox" id="lead-review">
+        <span>I'd like a free 15-minute review of this deal.</span>
+      </label>
+      <label class="check">
+        <input type="checkbox" id="lead-consent" aria-describedby="lead-consent-error">
+        <span>Send my contact details and this deal (its name, numbers, red flags and stop rule) to Shamoil Plumber, who may contact me about it.</span>
+      </label>
+      <span class="error" id="lead-consent-error" role="alert"></span>
+
+      <details class="privacy-note">
+        <summary>How your details are used</summary>
+        <p>They are saved to a private Google Sheet that only Shamoil Plumber can open, and used only to contact you about this deal. They are never sold or shared. To see or delete them, email <a href="mailto:shamoilp@outlook.com">shamoilp@outlook.com</a>.</p>
+      </details>
+
+      <div class="trap" aria-hidden="true">
+        <label for="lead-website">Leave this empty</label>
+        <input id="lead-website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="dialog-actions">
+        <button type="submit" id="unlock-submit" class="btn">Unlock report</button>
+        <button type="button" id="unlock-cancel" class="btn ghost">Not now</button>
+      </div>
+      <p class="status" id="unlock-status" role="status"></p>
+    </form>
+  </dialog>
 
   <a id="mini-score" class="mini-score" href="#result-title" hidden>
     <span>WIWI <strong id="mini-value"></strong></span>
@@ -163,6 +219,7 @@
 
   <footer class="wrap footer">
     <p>Formula from <strong>“ROI of Ego”</strong>, <em>Business Advisor</em> (Shrinikethan, Chennai; ed. <a href="https://www.linkedin.com/in/muralide/" rel="noopener">D. Murali</a>), 25 Oct 2026. The 1.5 band, red-flag check and ego-tax suggestion are this tool's additions.</p>
+    <p id="privacy"><strong>Privacy.</strong> Your numbers stay in your browser while you use the calculator. If you unlock the report, your name, contact details and the deal you entered (name, numbers, red flags and stop rule) are saved to a private Google Sheet owned by Shamoil Plumber and used only to contact you about that deal. To see or delete them, email <a href="mailto:shamoilp@outlook.com">shamoilp@outlook.com</a>.</p>
     <p>Built by <a href="https://github.com/shamoilp">Shamoil Plumber</a>, accountant and tax advisor in Saudi Arabia · <a href="https://github.com/shamoilp/wiwi-calculator">Source on GitHub</a> · MIT licence. A thinking aid, not financial advice.</p>
   </footer>
 </body>

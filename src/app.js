@@ -12,7 +12,12 @@ import {
   roundUpPercent,
   suggestEgoTax,
 } from './wiwi.js';
+import { buildLeadPayload, isAcceptedReply, validateLead } from './leads.js';
 
+const UNLOCK_KEY = 'wiwi-unlocked';
+const REQUEST_TIMEOUT_MS = 15000;
+const LEAD_ERROR_FIELDS = Object.freeze(['name', 'email', 'whatsapp', 'consent']);
+const ACTION_TEXT = Object.freeze({ pdf: 'download your PDF report', link: 'get your share link' });
 const GAUGE_MAX = 3;
 const DEFAULT_CHANCE = 50;
 const AMOUNT_FIELDS = Object.freeze(['value', 'directCost', 'opportunityCost', 'egoTax']);
@@ -156,7 +161,7 @@ function render() {
   const state = readState();
   $('status').textContent = '';
   renderSuggestion(state);
-  updateAddressBar(state);
+  if (isUnlocked()) updateAddressBar(state); // while locked, the address bar must not hand out the share link
 
   if (showFieldErrors(state)) return showEmpty('Fix the highlighted field to see the score.');
   const result = computeWiwi(state);
@@ -176,6 +181,115 @@ async function copyShareLink() {
     console.warn('Clipboard write failed:', error);
     $('status').textContent = "Couldn't copy automatically. Copy the link from your address bar.";
   }
+}
+
+// --- Unlock flow: the PDF and share link need contact details when a lead endpoint is set ---
+
+const leadEndpoint = () => (document.querySelector('meta[name="lead-endpoint"]')?.content ?? '').trim();
+const isUnlocked = () => document.body.classList.contains('unlocked');
+
+function rememberedUnlock() {
+  try {
+    return localStorage.getItem(UNLOCK_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function unlock() {
+  document.body.classList.add('unlocked');
+  try {
+    localStorage.setItem(UNLOCK_KEY, '1');
+  } catch (error) {
+    console.warn('Could not remember the unlock in this browser:', error);
+  }
+  updateAddressBar(readState());
+}
+
+function runAction(action) {
+  if (action === 'pdf') window.print();
+  else copyShareLink();
+}
+
+function requestAction(action) {
+  if (isUnlocked()) return runAction(action);
+  const dialog = $('unlock-dialog');
+  dialog.dataset.action = action;
+  $('unlock-action-text').textContent = ACTION_TEXT[action];
+  $('unlock-status').textContent = '';
+  showLeadErrors({});
+  if (typeof dialog.showModal === 'function') dialog.showModal();
+  else dialog.setAttribute('open', '');
+  $('lead-name').focus();
+  return undefined;
+}
+
+function closeUnlockDialog() {
+  const dialog = $('unlock-dialog');
+  if (typeof dialog.close === 'function') dialog.close();
+  else dialog.removeAttribute('open');
+}
+
+function readLead() {
+  return {
+    name: $('lead-name').value,
+    email: $('lead-email').value,
+    whatsapp: $('lead-whatsapp').value,
+    wantsReview: $('lead-review').checked,
+    consent: $('lead-consent').checked,
+    website: $('lead-website').value,
+  };
+}
+
+function showLeadErrors(errors) {
+  for (const field of LEAD_ERROR_FIELDS) {
+    $(`lead-${field}-error`).textContent = errors[field] ?? '';
+    $(`lead-${field}`).setAttribute('aria-invalid', errors[field] ? 'true' : 'false');
+  }
+}
+
+async function sendLead(payload) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    // A plain-text body keeps this a "simple" request, which Apps Script accepts without a CORS preflight.
+    const response = await fetch(leadEndpoint(), { method: 'POST', body: JSON.stringify(payload), signal: controller.signal });
+    const reply = await response.json();
+    if (!isAcceptedReply(reply)) throw new Error(`Lead endpoint replied: ${reply?.error}`);
+    if (!reply.ok) console.warn('Lead sheet is busy; unlocking without saving.');
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function submitLead(event) {
+  event.preventDefault();
+  const lead = readLead();
+  const check = validateLead(lead);
+  showLeadErrors(check.errors);
+  if (!check.ok) return;
+
+  const action = $('unlock-dialog').dataset.action;
+  const state = readState();
+  const page = `${location.origin}${location.pathname}`;
+  $('unlock-submit').disabled = true;
+  $('unlock-status').textContent = 'Saving…';
+  try {
+    await sendLead(buildLeadPayload({ state, result: computeWiwi(state), lead, action, page }));
+    unlock();
+    closeUnlockDialog();
+    runAction(action);
+  } catch (error) {
+    console.error('Lead not saved:', error);
+    $('unlock-status').textContent = "Couldn't save your details. Check your connection and try again.";
+  } finally {
+    $('unlock-submit').disabled = false;
+  }
+}
+
+function bindUnlockEvents() {
+  $('unlock-form').addEventListener('submit', submitLead);
+  $('unlock-cancel').addEventListener('click', closeUnlockDialog);
 }
 
 function buildControls() {
@@ -212,11 +326,13 @@ function bindEvents() {
     render();
   });
   $('load-example').addEventListener('click', () => { applyState(EXAMPLE); render(); });
-  $('copy-link').addEventListener('click', copyShareLink);
-  $('print').addEventListener('click', () => window.print());
+  $('copy-link').addEventListener('click', () => requestAction('link'));
+  $('print').addEventListener('click', () => requestAction('pdf'));
 }
 
+if (!leadEndpoint() || rememberedUnlock()) document.body.classList.add('unlocked');
 buildControls();
 applyState(decodeState(location.search));
 bindEvents();
+bindUnlockEvents();
 render();

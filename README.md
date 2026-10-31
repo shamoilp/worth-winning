@@ -38,7 +38,8 @@ The tool also shows the **chance of success you'd need to break even**, which is
 - **Stop rule.** You write down "I walk away if…" before you start, while you're still calm.
 - **Share link.** The numbers are saved in the link, so you can send a scored deal to a partner or client.
 - **Print / save PDF.** A one-page summary with the score, red flags and stop rule.
-- **Private.** Everything runs in your browser and nothing is sent anywhere. The numbers are kept in the page address so share links work, which means they also show up in your browser history. Use a private window for sensitive deals.
+- **Free score, simple unlock.** Anyone can see their score. To download the PDF or copy the share link, they leave a name and an email or WhatsApp number and tick a consent box. Each unlock lands as a row in a private Google Sheet. Setup: [`apps-script/README.md`](apps-script/README.md).
+- **Private by default.** The numbers stay in the browser while you use the calculator. They are only sent if you unlock the report, and only after you agree. After unlocking, the numbers are kept in the page address so share links work, which means they also show up in your browser history.
 
 ## Run it locally
 
@@ -56,7 +57,7 @@ npm install   # only needed for the page tests (jsdom)
 npm test
 ```
 
-There are 42 tests: the formula, validation and share links in `src/wiwi.js`, plus the page wiring in `src/app.js`.
+There are 69 tests: the formula, validation and share links (`src/wiwi.js`), the contact form (`src/leads.js`), the page and unlock flow (`src/app.js`), and the Google Sheet script (`apps-script/Code.gs`, run against fake Google services).
 
 ## Credit
 
